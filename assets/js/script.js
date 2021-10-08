@@ -4,21 +4,26 @@ $("#currentDay").text(moment().format("dddd, MMMM D, YYYY"));
 // create array to store hour objects
 var plannerArr = [];
 
-// create object for each business hour and push into planner array
-for (var hour = 9; hour <= 17; hour++) {
-    hourObj = {
-        hour: moment().set({
-            "hour": hour,
-            "minute": "0",
-            "second": "0",
-            "millisecond": "0"
-        }).format("hA"),
-        plan: ""
-    };
-    plannerArr.push(hourObj);
+// load plannerArr from local storage
+var savedPlannerArr = window.localStorage.getItem("plannerArr");
+// if there is no savedPlannerArr, create one
+if (!savedPlannerArr) {
+    // create object for each business hour and push into planner array
+    for (var hour = 9; hour <= 17; hour++) {
+        hourObj = {
+            hour: moment().set({
+                "hour": hour,
+                "minute": "0",
+                "second": "0",
+                "millisecond": "0"
+            }).format("hA"),
+            plan: ""
+        };
+        plannerArr.push(hourObj);
+    }
+} else {
+    plannerArr = JSON.parse(savedPlannerArr);
 }
-
-console.log(plannerArr);
 
 // loop through planner array and create bootstrap row & columns for each object
 for (var i = 0; i < plannerArr.length; i++) {
@@ -28,10 +33,14 @@ for (var i = 0; i < plannerArr.length; i++) {
         .text(plannerArr[i].hour);
     // create column for textarea
     var textColEl = $("<textarea>")
+        .attr("data-planner-index", i)
+        .val(plannerArr[i].plan)
         .addClass("col-10");
     // create column for save button
     var saveColEl = $("<button>")
-        .addClass("col-1 btn saveBtn");
+        .attr("data-planner-index", i)
+        .addClass("col-1 btn saveBtn")
+        .html("<i class='fas fa-save'></i>");
     //create row and add all columns to it
     var rowEl = $("<div>")
         .addClass("row time-block")
@@ -52,6 +61,7 @@ var auditTimeBlocks = function () {
             "millisecond": "0"
         });
 
+    // color code textarea based on current time    
     $(".time-block").each(function () {
         // remove previously set color coding classes
         $(this).children("textarea").removeClass("past present future")
@@ -72,3 +82,17 @@ var auditTimeBlocks = function () {
 }
 
 auditTimeBlocks();
+
+// save textarea
+var saveText = function () {
+    // get index of save button clicked
+    var targetedIndex = $(this).attr("data-planner-index");
+    // get text from textarea
+    var textInput = $("textarea[data-planner-index='" + targetedIndex + "']").val();
+    // update plannerArr with text from textarea
+    plannerArr[targetedIndex].plan = textInput;
+    // replace plannerArr in local storage with updated plannerArr
+    window.localStorage.setItem("plannerArr", JSON.stringify(plannerArr));
+}
+
+$(".saveBtn").on("click", saveText);
