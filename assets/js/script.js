@@ -32,16 +32,16 @@ if (!savedPlannerArr) {
 for (var i = 0; i < plannerArr.length; i++) {
     // create column for time
     var timeColEl = $("<div>")
-        .addClass("col-1 hour")
+        .addClass("col-2 col-lg-1 hour")
         .text(plannerArr[i].hour);
     // create column for textarea
     var textColEl = $("<textarea>")
-        .addClass("col-10")
+        .addClass("col-8 col-md-9 col-lg-10")
         .attr("data-planner-index", i)
         .val(plannerArr[i].plan);
     // create column for save button
     var saveColEl = $("<button>")
-        .addClass("col-1 btn saveBtn")
+        .addClass("col-2 col-md-1 btn saveBtn")
         .attr("data-planner-index", i)
         .html("<i class='fas fa-save'></i>");
     //create row and add all columns to it
