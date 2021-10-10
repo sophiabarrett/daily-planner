@@ -1,12 +1,15 @@
 // add today's date to header
-$("#currentDay").text(moment().format("dddd, MMMM D, YYYY"));
+var updateDate = function() {
+    $("#currentDay").text(moment().format("dddd, MMMM D, YYYY"));
+}
 
-// create array to store hour objects
+// declare array to store hour objects
 var plannerArr = [];
 
 // load plannerArr from local storage
 var savedPlannerArr = window.localStorage.getItem("plannerArr");
-// if there is no savedPlannerArr, create one
+
+// if there is no plannerArr to load from localStorage, create one
 if (!savedPlannerArr) {
     // create object for each business hour and push into planner array
     for (var hour = 9; hour <= 17; hour++) {
@@ -25,7 +28,7 @@ if (!savedPlannerArr) {
     plannerArr = JSON.parse(savedPlannerArr);
 }
 
-// loop through planner array and create bootstrap row & columns for each object
+// loop through plannerArr and create bootstrap row & columns for each object
 for (var i = 0; i < plannerArr.length; i++) {
     // create column for time
     var timeColEl = $("<div>")
@@ -33,13 +36,13 @@ for (var i = 0; i < plannerArr.length; i++) {
         .text(plannerArr[i].hour);
     // create column for textarea
     var textColEl = $("<textarea>")
+        .addClass("col-10")
         .attr("data-planner-index", i)
-        .val(plannerArr[i].plan)
-        .addClass("col-10");
+        .val(plannerArr[i].plan);
     // create column for save button
     var saveColEl = $("<button>")
-        .attr("data-planner-index", i)
         .addClass("col-1 btn saveBtn")
+        .attr("data-planner-index", i)
         .html("<i class='fas fa-save'></i>");
     //create row and add all columns to it
     var rowEl = $("<div>")
@@ -52,7 +55,7 @@ for (var i = 0; i < plannerArr.length; i++) {
 }
 
 // color code time blocks based on current time
-var auditTimeBlocks = function () {
+var colorCode = function () {
     // get current hour (instead of exact time) as moment.js object
     var currentHour = moment()
         .set({
@@ -61,7 +64,7 @@ var auditTimeBlocks = function () {
             "millisecond": "0"
         });
 
-    // color code textarea based on current time    
+    // color code each textarea based on current time    
     $(".time-block").each(function () {
         // remove previously set color coding classes
         $(this).children("textarea").removeClass("past present future")
@@ -81,9 +84,7 @@ var auditTimeBlocks = function () {
     });
 }
 
-auditTimeBlocks();
-
-// save textarea
+// save user input text to localStorage
 var saveText = function () {
     // get index of save button clicked
     var targetedIndex = $(this).attr("data-planner-index");
@@ -94,5 +95,9 @@ var saveText = function () {
     // replace plannerArr in local storage with updated plannerArr
     window.localStorage.setItem("plannerArr", JSON.stringify(plannerArr));
 }
+
+updateDate();
+
+colorCode();
 
 $(".saveBtn").on("click", saveText);
