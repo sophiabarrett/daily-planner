@@ -97,8 +97,5 @@ var saveText = function () {
 }
 
 updateDate();
-
 colorCode();
-
 $(".saveBtn").on("click", saveText);
-$(".saveBtn").click();
