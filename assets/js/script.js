@@ -67,7 +67,7 @@ var colorCode = function () {
     // color code each textarea based on current time    
     $(".time-block").each(function () {
         // remove previously set color coding classes
-        $(this).children("textarea").removeClass("past present future")
+        $(this).children("textarea").removeClass("past present future");
 
         // get each time block's displayed time and convert to moment.js object
         var timeColElText = $(this).children(".hour").text();
@@ -81,7 +81,7 @@ var colorCode = function () {
         } else {
             $(this).children("textarea").addClass("future");
         }
-    });
+    })
 }
 
 // save user input text to localStorage
@@ -101,3 +101,4 @@ updateDate();
 colorCode();
 
 $(".saveBtn").on("click", saveText);
+$(".saveBtn").click();
